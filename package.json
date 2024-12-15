@@ -1,5 +1,5 @@
 {
-  "name": "uniswapv3",
+  "name": "chain-scripts",
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
