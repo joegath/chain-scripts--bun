@@ -65,7 +65,7 @@ export const getAddressEthBalance = async ({
   return convertToString(await web3.eth.getBalance(address));
 };
 
-export const fromWei = ({
+export const fromSunits = ({
   value,
   decimals,
   web3,
@@ -81,7 +81,7 @@ export const fromWei = ({
   }
 };
 
-export const toWei = ({
+export const toSunits = ({
   value,
   decimals,
   web3,
