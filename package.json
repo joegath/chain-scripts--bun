@@ -1,0 +1,17 @@
+{
+  "name": "uniswapv3",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "bignumber.js": "^9.1.2",
+    "uuid": "^11.0.3",
+    "web3": "^4.16.0",
+    "zod": "^3.24.1"
+  }
+}
