@@ -1,7 +1,13 @@
-console.log("Hello via Bun!");
+async function index() {}
+index()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
 
-const f = (foo: any) => {
-  console.log("faulty func");
-};
+/**
+ 
+bun run index.ts
 
-f(5);
+ */
