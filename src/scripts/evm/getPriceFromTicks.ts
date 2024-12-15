@@ -1,4 +1,4 @@
-import { BN } from "../lib/bignumber";
+import { BN } from "../../lib/bignumber";
 
 type PoolInfoType = {
   sqrtX96: string;
@@ -55,6 +55,6 @@ main()
 
 /**
  
-bun run src/scripts/getPriceFromTicks.ts
+bun run src/scripts/evm/getPriceFromTicks.ts
 
  */
