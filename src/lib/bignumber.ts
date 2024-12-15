@@ -36,7 +36,7 @@ export const bnMath = (
 
     default:
       throw new Error(
-        `bnmath error. Args: (${valueOne}, ${valueTwo}, ${operation})`
+        `bnMath error. Args: (valueOne: ${valueOne}, valueTwo: ${valueTwo}, operation: ${operation})`
       );
   }
 };

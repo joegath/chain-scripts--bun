@@ -5,11 +5,6 @@ export const uuidV4 = () => {
   return v4();
 };
 
-export const createImageFilePath = (fileName: string) => {
-  //appends fileName to an auto-generated UUID
-  return `images/${fileName + "_" + uuidV4()}`;
-};
-
 /**
  * Extracts Zod validation errors from a SafeParseReturnType.
  * This function takes a z.SafeParseReturnType as input and extracts
