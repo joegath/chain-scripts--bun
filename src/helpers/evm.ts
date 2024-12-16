@@ -1,7 +1,7 @@
 import { BN } from "../lib/bignumber";
 
 type PoolInfoType = {
-  sqrtX96: string;
+  sqrtPriceX96: string;
   pair: string;
   decimal0: string;
   decimal1: string;
@@ -12,9 +12,7 @@ type PoolInfoType = {
 // {"SqrtX96" : slot0.sqrtPriceX96.toString(), "Pair": pairName, "Decimal0": Decimal0, "Decimal1": Decimal1}
 
 export function computeTokenPrices(poolInfo: PoolInfoType) {
-  let sqrtPriceX96 = poolInfo.sqrtX96;
-  let decimal0 = poolInfo.decimal0;
-  let decimal1 = poolInfo.decimal1;
+  const { sqrtPriceX96, decimal0, decimal1 } = poolInfo;
 
   // Calculate the price of token0 in terms of token1
   const priceOfToken0 = BN.div(
