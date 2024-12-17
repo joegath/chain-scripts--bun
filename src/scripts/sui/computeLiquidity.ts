@@ -1,14 +1,16 @@
+import { BN } from "turbos-clmm-sdk";
 import { NetworksEnum } from "../../lib/sui";
 import { turbosSdk } from "../../lib/turbos";
+import { computeLiquidity } from "../../helpers/sui";
 
 async function main() {
-  const network = NetworksEnum.Testnet;
-  const sdk = turbosSdk[network];
-  const amount0 = "400";
-  const priceLower = "0.01";
-  const priceUpper = "50";
+  const amountA = "31308119448.95657";
+  const priceLower = "0.00009999008911881024";
+  const priceUpper = "9.999997796808161";
 
-  // const liq = sdk.pool.getFixedLiquidity;
+  const liquity = computeLiquidity({ amountA, priceLower, priceUpper });
+
+  console.log({ liquity });
 }
 main()
   .then(() => process.exit(0))
@@ -19,6 +21,6 @@ main()
 
 /**
  
-bun run src/scripts/sui/getPoolArgs.ts
+bun run src/scripts/sui/computeLiquidity.ts
 
  */

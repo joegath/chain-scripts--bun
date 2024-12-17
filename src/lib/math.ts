@@ -53,3 +53,10 @@ export const toBps = (value: string) => {
 export const fromBps = (value: string) => {
   return (parseFloat(value) / 100).toString();
 };
+
+export const toFixedString = (val: any) => {
+  if (!checkIsNumber(val)) {
+    throw new Error(`${val} is not a number`);
+  }
+  return val.toString().split(".")[0];
+};
