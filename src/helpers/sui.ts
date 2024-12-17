@@ -32,23 +32,23 @@ export const computeCreatePoolData = async ({
   // const decimalsA = 9;
   // const decimalsB = 9;
 
-  /** CUSTOM PRICE BOUNDS: UNCOMMENT WHEN USING */
+  /** UNCOMMENT WHEN USING CUSTOM PRICE BOUNDS */
 
-  // const priceLowerInDunits = BN.div(priceCurrentInDunits, "1000000");
-  // const priceUpperInDunits = BN.mul(priceCurrentInDunits, "1000000");
+  const priceLowerInDunits = BN.div(priceCurrentInDunits, "10");
+  const priceUpperInDunits = BN.mul(priceCurrentInDunits, "10");
 
-  /** MIN and MAX PRICE BOUNDS: UNCOMMENT WHEN USING */
+  /** UNCOMMENT WHEN USING MIN and MAX PRICE BOUNDS:  */
 
-  const priceLowerInDunits = sdk.math.tickIndexToPrice(
-    MIN_TICK_INDEX,
-    decimalsA,
-    decimalsB
-  );
-  const priceUpperInDunits = sdk.math.tickIndexToPrice(
-    MAX_TICK_INDEX,
-    decimalsA,
-    decimalsB
-  );
+  // const priceLowerInDunits = sdk.math.tickIndexToPrice(
+  //   MIN_TICK_INDEX,
+  //   decimalsA,
+  //   decimalsB
+  // );
+  // const priceUpperInDunits = sdk.math.tickIndexToPrice(
+  //   MAX_TICK_INDEX,
+  //   decimalsA,
+  //   decimalsB
+  // );
 
   const amountBInSunits = toSunits(amountBInDunits, {
     decimals: decimalsB.toString(),
@@ -74,12 +74,17 @@ export const computeCreatePoolData = async ({
   const priceUpper = tickToPrice(tickUpper);
   const priceCurrent = tickToPrice(tickCurrent);
 
-  const liquidity =
-    Number(amountBInSunits) / (Math.sqrt(priceCurrent) - Math.sqrt(priceLower));
+  const liquidity = BN.div(
+    amountBInSunits,
+    BN.sub(BN.sqrt(priceCurrent.toString()), BN.sqrt(priceLower.toString()))
+  );
 
   const amountAInSunits = toFixedString(
-    (liquidity * (Math.sqrt(priceUpper) - Math.sqrt(priceCurrent))) /
-      (Math.sqrt(priceCurrent) * Math.sqrt(priceUpper))
+    BN.mulDiv(
+      liquidity,
+      BN.sub(BN.sqrt(priceUpper.toString()), BN.sqrt(priceCurrent.toString())),
+      BN.mul(BN.sqrt(priceCurrent.toString()), BN.sqrt(priceUpper.toString()))
+    )
   );
 
   const amountAInDunits = fromSunits(amountAInSunits, {
