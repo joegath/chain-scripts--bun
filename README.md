@@ -1,4 +1,4 @@
-# uniswapv3
+# chain-scripts
 
 To install dependencies:
 
