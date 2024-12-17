@@ -1,13 +1,7 @@
 import type { TurbosSdk } from "turbos-clmm-sdk";
-import {
-  Decimal,
-  MAX_TICK_INDEX,
-  MIN_TICK_INDEX,
-  BN as TurboBN,
-} from "turbos-clmm-sdk";
+import { MAX_TICK_INDEX, MIN_TICK_INDEX } from "turbos-clmm-sdk";
 import { BN } from "../lib/bignumber";
-import { toSunits } from "../lib/sui";
-import { bigint } from "zod";
+import { toSunits, fromSunits } from "../lib/sui";
 import { toFixedString } from "../lib/math";
 
 export function tickToPrice(tick: number): number {
@@ -19,28 +13,31 @@ export const computeCreatePoolData = async ({
   coinTypeA,
   coinTypeB,
   priceCurrentInDunits, //price of coinA in terms of coinB
-  amountAInDunits,
+  amountBInDunits,
 }: {
   sdk: TurbosSdk;
   coinTypeA: string;
   coinTypeB: string;
   priceCurrentInDunits: string;
-  amountAInDunits: string;
+  amountBInDunits: string;
 }) => {
-  //Define lower and upper price bounds
-  // const priceLowerInDunits = BN.div(priceCurrentInDunits, "10");
-  // const priceUpperInDunits = BN.mul(priceCurrentInDunits, "10000000");
+  const [coinAMetadata, coinBMetadata] = await Promise.all([
+    await sdk.coin.getMetadata(coinTypeA),
+    await sdk.coin.getMetadata(coinTypeB),
+  ]);
 
-  // const [coinAMetadata, coinBMetadata] = await Promise.all([
-  //   await sdk.coin.getMetadata(coinTypeA),
-  //   await sdk.coin.getMetadata(coinTypeB),
-  // ]);
+  const decimalsA = coinAMetadata.decimals;
+  const decimalsB = coinBMetadata.decimals;
 
-  // const decimalsA = coinAMetadata.decimals;
-  // const decimalsB = coinBMetadata.decimals;
+  // const decimalsA = 9;
+  // const decimalsB = 9;
 
-  const decimalsA = 9;
-  const decimalsB = 9;
+  /** CUSTOM PRICE BOUNDS: UNCOMMENT WHEN USING */
+
+  // const priceLowerInDunits = BN.div(priceCurrentInDunits, "1000000");
+  // const priceUpperInDunits = BN.mul(priceCurrentInDunits, "1000000");
+
+  /** MIN and MAX PRICE BOUNDS: UNCOMMENT WHEN USING */
 
   const priceLowerInDunits = sdk.math.tickIndexToPrice(
     MIN_TICK_INDEX,
@@ -53,8 +50,8 @@ export const computeCreatePoolData = async ({
     decimalsB
   );
 
-  const amountAInSunits = toSunits(amountAInDunits, {
-    decimals: decimalsA.toString(),
+  const amountBInSunits = toSunits(amountBInDunits, {
+    decimals: decimalsB.toString(),
   });
 
   const tickLower = sdk.math.priceToTickIndex(
@@ -78,13 +75,16 @@ export const computeCreatePoolData = async ({
   const priceCurrent = tickToPrice(tickCurrent);
 
   const liquidity =
-    (Number(amountAInSunits) *
-      (Math.sqrt(priceLower) * Math.sqrt(priceUpper))) /
-    (Math.sqrt(priceUpper) - Math.sqrt(priceLower));
+    Number(amountBInSunits) / (Math.sqrt(priceCurrent) - Math.sqrt(priceLower));
 
-  const amountBInSunits = toFixedString(
-    liquidity * (Math.sqrt(priceCurrent) - Math.sqrt(priceLower))
+  const amountAInSunits = toFixedString(
+    (liquidity * (Math.sqrt(priceUpper) - Math.sqrt(priceCurrent))) /
+      (Math.sqrt(priceCurrent) * Math.sqrt(priceUpper))
   );
+
+  const amountAInDunits = fromSunits(amountAInSunits, {
+    decimals: decimalsA.toString(),
+  });
 
   if (BN.isLessThan(tickLower.toString(), MIN_TICK_INDEX.toString())) {
     throw new Error("tickLower is less than MIN_TICK_INDEX");
@@ -93,7 +93,12 @@ export const computeCreatePoolData = async ({
     throw new Error("tickUpper is greater than MAX_TICK_INDEX");
   }
 
+  //To check if it aligns with the set priceCurrent
   const computedPriceCurrent = BN.div(amountBInSunits, amountAInSunits);
+
+  const sqrtPriceCurrent = toFixedString(
+    BN.mul(priceCurrent.toString(), BN.pow("2", "64"))
+  );
 
   return {
     priceLowerInDunits,
@@ -104,8 +109,11 @@ export const computeCreatePoolData = async ({
     tickCurrent,
     amountAInSunits,
     amountBInSunits,
+    amountAInDunits,
+    amountBInDunits,
     liquidity,
     computedPriceCurrent,
+    sqrtPriceCurrent,
   };
 };
 

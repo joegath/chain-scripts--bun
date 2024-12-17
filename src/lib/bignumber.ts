@@ -81,6 +81,10 @@ export const BN = {
   mulDiv: (val: string, val2: string, val3: string): string =>
     bnMulDiv(val, val2, val3),
   pow: (val1: string, val2: string): string => bnMath(val1, val2, "pow"),
+  sqrt: (val: string) => {
+    const bnRes = toBn(val).sqrt();
+    return bnRes.toFixed();
+  },
   isEqualTo: (val1: string, val2: string): boolean =>
     toBn(val1).isEqualTo(toBn(val2)),
   isGreaterThan: (val1: string, val2: string): boolean =>
