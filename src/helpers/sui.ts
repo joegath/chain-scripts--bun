@@ -99,9 +99,9 @@ export const computeCreatePoolData = async ({
   //should be around the set priceCurrent
   const computedPriceCurrent = BN.div(amountBInSunits, amountAInSunits);
 
-  const sqrtPriceCurrent = toFixedString(
-    BN.mul(priceCurrent.toString(), BN.pow("2", "64"))
-  );
+  const sqrtPriceCurrent = sdk.math
+    .priceToSqrtPriceX64(priceCurrent, decimalsA, decimalsB)
+    .toString();
 
   return {
     priceLowerInDunits,
