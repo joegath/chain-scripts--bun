@@ -14,7 +14,7 @@ export const checkDirExists = async (dirPath: string) => {
 };
 
 export const createDir = async (dirPath: string) => {
-  await fs.mkdir(dirPath, { recursive: true });
+  await fs.mkdir(path.dirname(dirPath), { recursive: true });
 };
 
 export const ensureDirExists = async (dirPath: string) => {
@@ -31,7 +31,7 @@ export const writeDataToFile = async ({
   filePath: string;
   data: string;
 }) => {
-  ensureDirExists(filePath);
+  await ensureDirExists(filePath);
   await fs.writeFile(filePath, data);
 };
 
