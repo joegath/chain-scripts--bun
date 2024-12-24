@@ -1,9 +1,9 @@
-import { computeCreatePoolData } from "../../helpers/sui";
-import { NetworksEnum } from "../../lib/sui";
-import { turbosSdk } from "../../lib/turbos";
+import { computeCreatePoolData } from "../../../helpers/sui";
+import { NetworkEnum } from "../../../lib/sui";
+import { turbosSdk } from "../../../lib/turbos";
 
 async function main() {
-  const network = NetworksEnum.Testnet;
+  const network = NetworkEnum.Testnet;
 
   // Data and configs
   const args = {

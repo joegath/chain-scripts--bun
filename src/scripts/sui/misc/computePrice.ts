@@ -1,9 +1,9 @@
 import { BN } from "turbos-clmm-sdk";
-import { NetworksEnum } from "../../lib/sui";
-import { turbosSdk } from "../../lib/turbos";
+import { NetworkEnum } from "../../../lib/sui";
+import { turbosSdk } from "../../../lib/turbos";
 
 async function main() {
-  const network = NetworksEnum.Testnet;
+  const network = NetworkEnum.Testnet;
   const sdk = turbosSdk[network];
   const sqrtPriceX64 = "2136964804597609968";
 

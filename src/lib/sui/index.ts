@@ -4,7 +4,7 @@ import { BN } from "../bignumber";
 
 export type NetworkType = "mainnet" | "testnet" | "devnet" | "localnet";
 
-export enum NetworksEnum {
+export enum NetworkEnum {
   Mainnet = "mainnet",
   Testnet = "testnet",
   Devnet = "devnet",
@@ -57,7 +57,7 @@ export const getCoinBalance = async (
 
 export const getSuiBalance = async (address: string) => {
   return await getCoinBalance(address, {
-    network: NetworksEnum.Mainnet,
+    network: NetworkEnum.Mainnet,
     coinType: SUI_COIN_TYPE,
   });
 };
