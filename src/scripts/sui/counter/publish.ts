@@ -3,7 +3,7 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { execSync } from "child_process";
 import { Transaction } from "@mysten/sui/transactions";
 import {
-  extractPublishedPkg,
+  extractPublishedPackage,
   resolveOutputFilePath,
   writeResData,
 } from "../../../helpers";
@@ -64,7 +64,7 @@ async function main() {
     console.log("Error writing data", error);
   }
 
-  const pkg = extractPublishedPkg(res);
+  const pkg = extractPublishedPackage(res);
   console.log({ pkgId: pkg?.packageId });
 }
 main()

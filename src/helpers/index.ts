@@ -6,6 +6,7 @@ import {
 import { checkDirExists, path, readFile, writeDataToFile } from "../lib/fs";
 import type {
   SuiObjectChange,
+  SuiObjectResponse,
   SuiTransactionBlockResponse,
 } from "@mysten/sui/client";
 
@@ -21,39 +22,53 @@ export const suiObjectChangeNarrowed = <T extends SuiObjectChangeType>(
   type: T
 ) => {
   return (
-    suiObjChange: SuiObjectChange
-  ): suiObjChange is Extract<SuiObjectChange, { type: T }> => {
-    return suiObjChange.type === type;
+    suiObjectChange: SuiObjectChange
+  ): suiObjectChange is Extract<SuiObjectChange, { type: T }> => {
+    return suiObjectChange.type === type;
   };
 };
 
-export const extractPublishedPkg = (res: SuiTransactionBlockResponse) => {
+export const extractMoveObjectFields = (res: SuiObjectResponse) => {
+  const dataType = res?.data?.content?.dataType;
+  if (dataType !== "moveObject")
+    throw new Error(`Expected moveObject, got ${dataType}`);
+  return res?.data?.content?.fields;
+};
+
+export const extractPackageBytecode = (res: SuiObjectResponse) => {
+  const dataType = res?.data?.content?.dataType;
+  if (dataType !== "package")
+    throw new Error(`Expected package, got ${dataType}`);
+  return res?.data?.content?.disassembled;
+};
+
+export const extractPublishedPackage = (res: SuiTransactionBlockResponse) => {
   return res?.objectChanges?.filter(suiObjectChangeNarrowed("published"))[0];
 };
 
-export const extractCreatedCoinObjFromTxRes = (
-  res: SuiTransactionBlockResponse
-) => {
+export const extractCreatedCoinObject = (res: SuiTransactionBlockResponse) => {
   return res?.objectChanges
     ?.filter(suiObjectChangeNarrowed("created"))
     ?.filter((item) => item?.objectType.includes(`0x2::coin::Coin<`))[0];
 };
 
-export const extractCoinTypeFromCoinObjType = (objType: string) => {
+export const extractCoinTypeFromCoinObjectType = (objType: string) => {
   if (!objType.includes("<") || !objType.includes(">")) {
     throw new Error("Invalid object type");
   }
   return objType.split("<")[1].split(">")[0];
 };
 
-export const extractCoinTypeFromTxRes = (res: SuiTransactionBlockResponse) => {
-  const createdCoinObj = extractCreatedCoinObjFromTxRes(res);
+export const extractCoinTypeFromTransactionResponse = (
+  res: SuiTransactionBlockResponse
+) => {
+  const createdCoinObj = extractCreatedCoinObject(res);
   throwIfNullOrUndefinedOrEmpty(createdCoinObj);
-  const coinType = extractCoinTypeFromCoinObjType(createdCoinObj.objectType);
+  const coinType = extractCoinTypeFromCoinObjectType(createdCoinObj.objectType);
   return coinType;
 };
 
-export const extractCreatedPoolObj = (
+export const extractCreatedPoolObject = (
   res: SuiTransactionBlockResponse,
   options: {
     coinTypeA: string;
@@ -102,9 +117,9 @@ export const getPublishedCoinFromOutput = async (outputPath: string) => {
   const outputData = await readDataFromFile<SuiTransactionBlockResponse>(
     outputPath
   );
-  const createdCoinObj = extractCreatedCoinObjFromTxRes(outputData);
+  const createdCoinObj = extractCreatedCoinObject(outputData);
   throwIfNullOrUndefinedOrEmpty(createdCoinObj);
-  const coinType = extractCoinTypeFromCoinObjType(createdCoinObj.objectType);
+  const coinType = extractCoinTypeFromCoinObjectType(createdCoinObj.objectType);
   return coinType;
 };
 

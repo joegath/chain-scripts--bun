@@ -10,7 +10,7 @@ import { resolveOutputFilePath, writeResData } from "../../../helpers";
 async function main() {
   const network = NetworkEnum.Devnet;
   const signer = Ed25519Keypair.deriveKeypair(
-    process.env.flamboyant_chrysolite!
+    process.env.flamboyant_chrysolite! //stoic_malachite!
   );
   const client = getClient(network);
 
