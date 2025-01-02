@@ -3,10 +3,6 @@ import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 import { Transaction } from "@mysten/sui/transactions";
 import { resolveOutputFilePath, writeResData } from "../../../helpers";
 
-/**
- * Script to migrate a shared object after upgrading its package
- *
- */
 async function main() {
   const network = NetworkEnum.Devnet;
   const signer = Ed25519Keypair.deriveKeypair(
