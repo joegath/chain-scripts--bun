@@ -75,7 +75,7 @@ async function main() {
       response: res,
     });
   } catch (error) {
-    console.log("Error writing data", error);
+    console.log("Error recording response", error);
   }
 }
 main()
