@@ -123,15 +123,15 @@ export const getPublishedCoinFromOutput = async (outputPath: string) => {
   return coinType;
 };
 
-export const writeResData = async ({
+export const recordResponse = async ({
   filePath,
-  res,
+  response,
 }: {
   filePath: string;
-  res: SuiTransactionBlockResponse;
+  response: SuiTransactionBlockResponse;
 }) => {
   await writeDataToFile({
     filePath,
-    data: JSON.stringify(res, null, 2),
+    data: JSON.stringify(response, null, 2),
   });
 };

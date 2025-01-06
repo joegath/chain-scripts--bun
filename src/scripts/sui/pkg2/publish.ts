@@ -5,7 +5,7 @@ import { Transaction } from "@mysten/sui/transactions";
 import {
   extractPublishedPackage,
   resolveOutputFilePath,
-  writeResData,
+  recordResponse,
 } from "../../../helpers";
 
 async function main() {
@@ -32,11 +32,11 @@ async function main() {
   tx.setSender(signer.getPublicKey().toSuiAddress());
   tx.setGasBudget(1000000000);
   const txBytes = await tx.build({ client });
-  const simulationRes = await client.dryRunTransactionBlock({
+  const simulationResponse = await client.dryRunTransactionBlock({
     transactionBlock: txBytes,
   });
-  if (simulationRes.effects.status.status !== "success") {
-    console.log("Simulation fail", simulationRes?.effects?.status?.error);
+  if (simulationResponse.effects.status.status !== "success") {
+    console.log("Simulation fail", simulationResponse?.effects?.status?.error);
     return;
   } else {
     console.log("Simulation success");
@@ -56,9 +56,9 @@ async function main() {
   await client.waitForTransaction({ digest: res.digest });
 
   try {
-    await writeResData({
+    await recordResponse({
       filePath: resolveOutputFilePath({ currFilePath: __filename, network }),
-      res,
+      response: res,
     });
   } catch (error) {
     console.log("Error writing data", error);
